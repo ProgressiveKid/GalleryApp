@@ -38,6 +38,9 @@ namespace WpfApp1
 		/// </summary>
 		private string ImageSource { get; set; }
 		#region CreateNewGalleryItem
+		/// <summary>
+		/// Выбрать с устройства изображение
+		/// </summary>
 		private void ButtonOpenImage_Click(object sender, RoutedEventArgs e)
 		{
 			OpenFileDialog openFileDialog = new OpenFileDialog();
@@ -51,7 +54,7 @@ namespace WpfApp1
 				{
 					ImageSource = selectedImagePath;
 					BitmapImage bitmap = new BitmapImage(new Uri(selectedImagePath));
-					Image.Source = bitmap;
+					ImgForCreate.Source = bitmap;
 				}
 				catch (Exception ex)
 				{
@@ -59,13 +62,16 @@ namespace WpfApp1
 				}
 			}
 		}
+		/// <summary>
+		/// Создать в бд новую запись
+		/// </summary>
 		private async void ButtonServerSend_Click(object sender, RoutedEventArgs e)
 		{
 			using (HttpClient client = new HttpClient())
 			{
 				try
 				{
-					string imageName = ImageName.Text;
+					string imageName = txtImgName.Text;
 					// Преобразование массива байтов в строку Base64
 					// Преобразование изображения в массив байтов
 
@@ -101,7 +107,10 @@ namespace WpfApp1
 		public void RefreshPage()
 		{
 		}
-		private async void Button_Click(object sender, RoutedEventArgs e)
+		/// <summary>
+		/// Получить по новой все картинки
+		/// </summary>
+		private async void ButtonGetAllGalleryItem_Click(object sender, RoutedEventArgs e)
 		{
 			using (HttpClient client = new HttpClient())
 			{
@@ -114,7 +123,7 @@ namespace WpfApp1
 						// Получение ответа в виде строки
 						string responseBody = await response.Content.ReadAsStringAsync();
 						List<GalleryItem> galleryItems = JsonConvert.DeserializeObject<List<GalleryItem>>(responseBody);
-						Image.Source = ImageHandler.FromStringToBitMap(galleryItems[0].Image);
+						ImgForShow.Source = ImageHandler.FromStringToBitMap(galleryItems[0].Image);
 						
 
 						// Присвоение BitmapImage свойству Source вашего элемента Image
