@@ -6,22 +6,23 @@
         xmlns:local="clr-namespace:WpfApp1"
         mc:Ignorable="d"
         Title="GalleryApp" Height="626" Width="954">
-    <TabControl Margin="64,24,-211,-25">
+    <TabControl x:Name="TabControl" Margin="64,24,-211,-25" SelectionChanged="TabControl_SelectionChanged">
         <TabItem Header="Добавление новой картины">
             <Grid Margin="0,0,289,-46">
-                <Image x:Name="ImgForCreate" HorizontalAlignment="Left" Height="230" Margin="224,62,0,0" VerticalAlignment="Top" Width="268"/>
+                <Image x:Name="ImgForCreate"  HorizontalAlignment="Left" Height="230" Margin="224,62,0,0" VerticalAlignment="Top" Width="268"/>
                 <Button x:Name="btnOpenImage" Content="Открыть локальную картинку"  HorizontalAlignment="Left" Margin="42,83,0,0" VerticalAlignment="Top" Height="34" Width="143" Click="ButtonOpenImage_Click"/>
                 <Button x:Name="btnSendToServer" Content="Отправить на сервер" HorizontalAlignment="Left" Margin="242,443,0,0" VerticalAlignment="Top" Height="34" Width="172" Click="ButtonServerSend_Click"/>
-                <Label Content="Название картинки" HorizontalAlignment="Left" Margin="114,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249"/>
+                <Label  Content="Название картинки" HorizontalAlignment="Left" Margin="114,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249"/>
                 <TextBox x:Name="txtImgName" HorizontalAlignment="Left" TextWrapping="Wrap"  VerticalAlignment="Center" Width="120" Margin="343,0,0,0"/>
             </Grid>
         </TabItem>
-        <TabItem Header="Все картины">
+        <TabItem x:Name="TabItemAllPictures"  Header="Все картины">
             <Grid Margin="0,0,289,-46">
-                <Image x:Name="ImgForShow" HorizontalAlignment="Left" Height="230" Margin="126,62,0,0" VerticalAlignment="Top" Width="268" Grid.Column="1"/>
-                <Button Content="Получить всё" HorizontalAlignment="Left" Margin="212,10,0,0" VerticalAlignment="Top" Width="118" Click="ButtonGetAllGalleryItem_Click" Height="30"/>
-                <Label Content="Название картинки" HorizontalAlignment="Left" Margin="16,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249" Grid.Column="1"/>
+                <Image x:Name="ImgForShow" Source="{Binding Path=Image}" HorizontalAlignment="Left" Height="230" Margin="126,62,0,0" VerticalAlignment="Top" Width="268" Grid.Column="1"/>
+                <Button Content="Получить всё" HorizontalAlignment="Left" Margin="10,21,0,0" VerticalAlignment="Top" Width="118" Height="30"/>
+                <Label Content="{Binding Path=ImageName}"  HorizontalAlignment="Left" Margin="16,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249" Grid.Column="1"/>
                 <TextBox x:Name="txtImgNameForShow" HorizontalAlignment="Left" TextWrapping="Wrap"  VerticalAlignment="Center" Width="120" Margin="343,0,0,0"/>
+                <ComboBox ItemsSource="{Binding Path=CollectionImageNames}" HorizontalAlignment="Left" Height="37" Margin="403,14,0,0" VerticalAlignment="Top" Width="292"/>
             </Grid>
         </TabItem>
         <TabItem Header="Описание"/>

@@ -21,6 +21,8 @@ using System.Net.Http;
 using System.Reflection.Metadata;
 using System.Net.Http.Json;
 using ClientSide.Functional;
+using SharedResources.ModelViews;
+using ClientSide.Services;
 
 namespace WpfApp1
 {
@@ -29,9 +31,13 @@ namespace WpfApp1
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		private readonly GalleryItemViewModel _viewModel;
 		public MainWindow()
 		{
 			InitializeComponent();
+			var galleryService = new GalleryService(new HttpClient());
+			_viewModel = new GalleryItemViewModel(galleryService);
+			DataContext = _viewModel;
 		}
 		/// <summary>
 		/// Путь до изображения
@@ -104,44 +110,25 @@ namespace WpfApp1
 			// Преобразование изображения в строку Base64
 		}
 		#endregion
-		public void RefreshPage()
-		{
-		}
-		/// <summary>
-		/// Получить по новой все картинки
-		/// </summary>
-		private async void ButtonGetAllGalleryItem_Click(object sender, RoutedEventArgs e)
-		{
-			using (HttpClient client = new HttpClient())
-			{
-				try
-				{
-					HttpResponseMessage response = await client.GetAsync("http://localhost:5258/Gallery/GetAllGalleryItems");
-					// Проверка успешности запроса
-					if (response.IsSuccessStatusCode)
-					{
-						// Получение ответа в виде строки
-						string responseBody = await response.Content.ReadAsStringAsync();
-						List<GalleryItem> galleryItems = JsonConvert.DeserializeObject<List<GalleryItem>>(responseBody);
-						ImgForShow.Source = ImageHandler.FromStringToBitMap(galleryItems[0].Image);
-						
 
-						// Присвоение BitmapImage свойству Source вашего элемента Image
-						
-						//Image.Source = ;
-						// Обработка полученных данных
-						//MessageBox.Show(responseBody);
-						//Console.WriteLine(responseBody);
-					}
-					else
-					{
-						Console.WriteLine("Ошибка при выполнении запроса: " + response.StatusCode);
-					}
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine("Ошибка: " + ex.Message);
-				}
+		//ButtonGetAllGalleryItem_Click
+		private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// Ваш код обработки события здесь
+			// Например, вы можете получить выбранный элемент ComboBox следующим образом:
+			var comboBox = sender as ComboBox;
+			var selectedItem = comboBox.SelectedItem as string;
+			_viewModel.GalleryItems.FirstOrDefault(item => item.ImageName == selectedItem);            // Далее выполните необходимые действия с выбранным элементом
+		}
+		private async void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			// Проверяем, что выбранная вкладка - "Все картины"
+			if (TabControl.SelectedItem == TabItemAllPictures)
+			{
+				// Вызываем метод для получения всех элементов галереи
+				//_viewModel.GetAllGalleryItems();
+
+				await _viewModel.LoadGalleryItems();
 			}
 		}
 	}
