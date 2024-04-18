@@ -6,8 +6,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using WpfApp1.ModelViews;
 
-namespace ClientSide.Services
+namespace WpfApp1.Services
 {
 	public class GalleryService
 	{
@@ -27,6 +28,7 @@ namespace ClientSide.Services
 				{
 					string responseBody = await response.Content.ReadAsStringAsync();
 					List<GalleryItem> galleryItems = JsonConvert.DeserializeObject<List<GalleryItem>>(responseBody);
+
 					return galleryItems;
 				}
 				else

@@ -3,28 +3,75 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfApp1"
+                    xmlns:local="clr-namespace:WpfApp1.Services"
+      xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+        xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+         xmlns:vm="clr-namespace:WpfApp1.ModelViews"
+         xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+         xmlns:fa="clr-namespace:FontAwesome.WPF;assembly=FontAwesome.WPF"
         mc:Ignorable="d"
+         TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+     TextElement.FontWeight="Regular"
+     TextElement.FontSize="13"
+     TextOptions.TextFormattingMode="Ideal"
+     TextOptions.TextRenderingMode="Auto"
+     Background="{DynamicResource MaterialDesignPaper}"
+     FontFamily="{DynamicResource MaterialDesignFont}"
+       
         Title="GalleryApp" Height="626" Width="954">
-    <TabControl x:Name="TabControl" Margin="64,24,-211,-25" SelectionChanged="TabControl_SelectionChanged">
-        <TabItem Header="Добавление новой картины">
-            <Grid Margin="0,0,289,-46">
-                <Image x:Name="ImgForCreate"  HorizontalAlignment="Left" Height="230" Margin="224,62,0,0" VerticalAlignment="Top" Width="268"/>
-                <Button x:Name="btnOpenImage" Content="Открыть локальную картинку"  HorizontalAlignment="Left" Margin="42,83,0,0" VerticalAlignment="Top" Height="34" Width="143" Click="ButtonOpenImage_Click"/>
-                <Button x:Name="btnSendToServer" Content="Отправить на сервер" HorizontalAlignment="Left" Margin="242,443,0,0" VerticalAlignment="Top" Height="34" Width="172" Click="ButtonServerSend_Click"/>
-                <Label  Content="Название картинки" HorizontalAlignment="Left" Margin="114,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249"/>
-                <TextBox x:Name="txtImgName" HorizontalAlignment="Left" TextWrapping="Wrap"  VerticalAlignment="Center" Width="120" Margin="343,0,0,0"/>
+    <Window.DataContext>
+        <vm:GalleryItemViewModel/>
+    </Window.DataContext>
+    <Window.Resources>
+        <vm:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+    </Window.Resources>
+    <TabControl x:Name="TabControl" IsEnabled="{Binding IsActiveTabControl}" 
+            Margin="0,10,0,0">
+        <TabItem Header="Добавление новой картины" Margin="-2,-1,-2,0">
+            <Grid>
+                <Image x:Name="ImgForCreate"  Source="{Binding Image}" HorizontalAlignment="Left" Stretch="Uniform" Height="314" Margin="238,95,0,0" VerticalAlignment="Top" Width="394"/>
+                <Button x:Name="btnOpenImage" Content="Открыть локальную картинку"  HorizontalAlignment="Left" Margin="278,42,0,0" VerticalAlignment="Top" Height="34" Width="306" Command="{Binding OpenLocalStorage}" RenderTransformOrigin="0.407,0.561"/>
+                <Button x:Name="btnSendToServer" Style="{DynamicResource MaterialDesignRaisedButton}"  Content="Отправить в галерею" HorizontalAlignment="Left" Margin="298,499,0,0" VerticalAlignment="Top" Height="34" Width="224"  Command="{Binding CreateNewItem}"/>
+                <Label Content="Введите название картины"  HorizontalAlignment="Left" Margin="63,454,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.672,-1.249" Height="34" Width="175"/>
+                <TextBox x:Name="txtImgName" HorizontalAlignment="Left" Text="{Binding ImageName, UpdateSourceTrigger=PropertyChanged}" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Margin="350,454,0,0"/>
+                <fa:ImageAwesome Icon="Send" VerticalAlignment="Top" HorizontalAlignment="Left" 
+                        Width="24" Height="26" Name="Github" Margin="256,504,0,0"></fa:ImageAwesome>
+
+                <Grid Visibility="{Binding IsActiveLoad, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <fa:ImageAwesome Icon="Refresh" Spin="{Binding IsActiveLoad}" Height="48" Width="48" IsEnabled="{Binding IsActiveLoad}" Panel.ZIndex="999"/>
+                </Grid>
             </Grid>
         </TabItem>
-        <TabItem x:Name="TabItemAllPictures"  Header="Все картины">
-            <Grid Margin="0,0,289,-46">
-                <Image x:Name="ImgForShow" Source="{Binding Path=Image}" HorizontalAlignment="Left" Height="230" Margin="126,62,0,0" VerticalAlignment="Top" Width="268" Grid.Column="1"/>
-                <Button Content="Получить всё" HorizontalAlignment="Left" Margin="10,21,0,0" VerticalAlignment="Top" Width="118" Height="30"/>
-                <Label Content="{Binding Path=ImageName}"  HorizontalAlignment="Left" Margin="16,0,0,0" VerticalAlignment="Center" RenderTransformOrigin="0.672,-1.249" Grid.Column="1"/>
-                <TextBox x:Name="txtImgNameForShow" HorizontalAlignment="Left" TextWrapping="Wrap"  VerticalAlignment="Center" Width="120" Margin="343,0,0,0"/>
-                <ComboBox ItemsSource="{Binding Path=CollectionImageNames}" HorizontalAlignment="Left" Height="37" Margin="403,14,0,0" VerticalAlignment="Top" Width="292"/>
+        <TabItem x:Name="TabItemAllPictures" Margin="-2,-1,-2,0">
+            <TabItem.Header>
+
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Просмотреть всё" Height="15"/>
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding GetAllItems}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </StackPanel>
+            </TabItem.Header>
+            <Grid>
+                <!--<Grid.Background>
+                    <ImageBrush ImageSource="/Resources/Wall.jpg" 
+                    Stretch="UniformToFill" 
+                    AlignmentX="Center" 
+                    AlignmentY="Center"/>
+                </Grid.Background>-->
+                <Image x:Name="ImgForShow" Source="{Binding Path=Image}" HorizontalAlignment="Left" Height="314" Margin="222,95,0,0" VerticalAlignment="Top" Width="394"/>
+                <Label Content="{Binding Path=ImageName, UpdateSourceTrigger=PropertyChanged}"  HorizontalAlignment="Left" Margin="372,412,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.672,-1.249" Height="56" Width="112"/>
+                <TextBox x:Name="txtImgNameForShow" TextWrapping="Wrap"  VerticalAlignment="Top" Width="120" Margin="364,493,464,0"/>
+                <ComboBox ItemsSource="{Binding Path=CollectionImageNames}" SelectedValue="{Binding ImageName}" HorizontalAlignment="Left" Height="36" Margin="278,40,0,0" VerticalAlignment="Top" Width="292"/>
+
+                <Grid Visibility="{Binding IsActiveLoad, Converter={StaticResource BoolToVisibilityConverter}}">
+                    <fa:ImageAwesome Icon="Refresh" Spin="{Binding IsActiveLoad}" Height="48" Width="48" IsEnabled="{Binding IsActiveLoad}" Panel.ZIndex="999"/>
+                </Grid>
             </Grid>
         </TabItem>
-        <TabItem Header="Описание"/>
+        <TabItem Header="Описание" Margin="-2,-1,-2,0"/>
     </TabControl>
+    
 </Window>

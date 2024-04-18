@@ -21,6 +21,21 @@ namespace ClientSide.Functional
 			return Convert.ToBase64String(imageBytes);
 		}
 
+
+		public static string FromImageToString64(BitmapImage image)
+		{
+			byte[] imageBytes;
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				BitmapEncoder encoder = new PngBitmapEncoder(); // Используйте соответствующий энкодер для вашего формата изображения
+				encoder.Frames.Add(BitmapFrame.Create(image));
+				encoder.Save(memoryStream);
+				imageBytes = memoryStream.ToArray();
+			}
+
+			return Convert.ToBase64String(imageBytes);
+		}
+
 		/// <summary>
 		/// Конвертирует строку Base64 в изображение BitmapImage.
 		/// </summary>
