@@ -5,8 +5,8 @@ namespace ServerSide.Services.Interfaces
 	public interface IGalleryService
 	{
 		string CreateNewItem(GalleryItem galleryItem);
-		string Update(int IdGalleryItem);
-		string Delete(int IdGalleryItem);
+		string UpdateItem(GalleryItem editableGalleryItem);
+		string DeleteItem(int idGalleryItem);
 		List<GalleryItem> GetAllGalleryItems();
 	}
 }

@@ -20,8 +20,6 @@ namespace ClientSide.Functional
 			byte[] imageBytes = File.ReadAllBytes(path);
 			return Convert.ToBase64String(imageBytes);
 		}
-
-
 		public static string FromImageToString64(BitmapImage image)
 		{
 			byte[] imageBytes;
@@ -32,16 +30,13 @@ namespace ClientSide.Functional
 				encoder.Save(memoryStream);
 				imageBytes = memoryStream.ToArray();
 			}
-
 			return Convert.ToBase64String(imageBytes);
 		}
-
 		/// <summary>
 		/// Конвертирует строку Base64 в изображение BitmapImage.
 		/// </summary>
 		/// <param name="image">Строка Base64, представляющая изображение.</param>
 		/// <returns>Экземпляр BitmapImage, представляющий изображение.</returns>
-
 		public static BitmapImage FromStringToBitMap(string image)
 		{
 			try
@@ -64,5 +59,6 @@ namespace ClientSide.Functional
 				throw new Exception("Ошибка при преобразовании строки Base64 в изображение BitmapImage: " + ex.Message);
 			}
 		}
+
 	}
 }

@@ -22,7 +22,6 @@ using System.Reflection.Metadata;
 using System.Net.Http.Json;
 using ClientSide.Functional;
 using WpfApp1.ModelViews;
-using WpfApp1.Services;
 
 namespace WpfApp1
 {
