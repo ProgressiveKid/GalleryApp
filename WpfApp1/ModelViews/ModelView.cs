@@ -19,7 +19,64 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 namespace WpfApp1.ModelViews
 {
-	public class GalleryItemViewModel : INotifyPropertyChanged
+	public class GalleryViewModel : INotifyPropertyChanged
+	{
+		private int _id;
+		public int Id
+		{
+			get { return _id; }
+			set
+			{
+				if (_id != value)
+				{
+					_id = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		/// <summary>
+		/// Текст для изображения
+		/// </summary>
+		private string _imageName;
+		public string ImageName
+		{
+			get { return _imageName; }
+			set
+			{
+				if (_imageName != value)
+				{
+					_imageName = value;
+					OnPropertyChanged();
+				}
+			}
+
+		}
+		/// <summary>
+		/// Изображение 
+		/// </summary>
+		private BitmapImage _image;
+		public BitmapImage Image
+		{
+			get { return _image; }
+			set
+			{
+				if (_image != value)
+				{
+					_image = value;
+					OnPropertyChanged();
+				}
+			}
+		}
+		public event PropertyChangedEventHandler PropertyChanged;
+		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
+	}
+
+
+
+		public class GalleryItemViewModel : INotifyPropertyChanged
 	{
 		public GalleryItemViewModel()
 		{
