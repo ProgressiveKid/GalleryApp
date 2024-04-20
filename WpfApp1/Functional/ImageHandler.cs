@@ -11,22 +11,27 @@ namespace ClientSide.Functional
 	class ImageHandler
 	{
 		/// <summary>
-		/// Конвертирует изображение из файла по указанному пути в строку Base64.
+		/// Конвертирует изображение из файла  в строку Base64.
 		/// </summary>
-		/// <param name="path">Путь к файлу изображения.</param>
+		/// <param name="path">изображение.</param>
 		/// <returns>Строка Base64, представляющая изображение.</returns>
-		public static string FromUriToString64(string path)
-		{ 
-			byte[] imageBytes = File.ReadAllBytes(path);
+		public static string FromImageToString64(BitmapImage image)
+		{
+			byte[] imageBytes;
+			using (MemoryStream memoryStream = new MemoryStream())
+			{
+				BitmapEncoder encoder = new PngBitmapEncoder(); // Используйте соответствующий энкодер для вашего формата изображения
+				encoder.Frames.Add(BitmapFrame.Create(image));
+				encoder.Save(memoryStream);
+				imageBytes = memoryStream.ToArray();
+			}
 			return Convert.ToBase64String(imageBytes);
 		}
-
 		/// <summary>
 		/// Конвертирует строку Base64 в изображение BitmapImage.
 		/// </summary>
 		/// <param name="image">Строка Base64, представляющая изображение.</param>
 		/// <returns>Экземпляр BitmapImage, представляющий изображение.</returns>
-
 		public static BitmapImage FromStringToBitMap(string image)
 		{
 			try
@@ -49,5 +54,6 @@ namespace ClientSide.Functional
 				throw new Exception("Ошибка при преобразовании строки Base64 в изображение BitmapImage: " + ex.Message);
 			}
 		}
+
 	}
 }

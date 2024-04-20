@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ServerSide.Middleware;
 using ServerSide.Services;
 using ServerSide.Services.Interfaces;
 
@@ -13,19 +14,22 @@ namespace ServerSide
 			string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 			builder.Services.AddDbContext<ApplicationContext>(options =>
 			{
-					options.UseSqlServer(connection);
+				options.UseSqlServer(connection);
+
 			});
 			builder.Services.AddControllers();
-			builder.Services.AddTransient<IGalleryService, GalleryManageService>(); 
+			builder.Services.AddTransient<IGalleryService, GalleryService>();
+			builder.Services.AddMemoryCache();
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 			var app = builder.Build();
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
 			{
-			//	app.UseSwagger();
-			//	app.UseSwaggerUI();
+				app.UseSwagger();
+				app.UseSwaggerUI();
 			}
+			app.UseMiddleware<LogMiddleware>();
 			app.UseHttpsRedirection();
 			app.UseAuthorization();
 			app.MapControllers();

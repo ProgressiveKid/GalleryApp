@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace SharedResources.Models
 {
 	public class GalleryItem
@@ -11,7 +10,5 @@ namespace SharedResources.Models
 		public int Id { get; set; }
 		public string ImageName { get; set; }
 		public string Image { get; set; }
-
-
 	}
 }
