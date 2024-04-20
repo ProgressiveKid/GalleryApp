@@ -30,7 +30,7 @@
 ![image](https://github.com/ProgressiveKid/GalleryApp/assets/71317131/a1d7945a-ca56-4a69-af1c-a8628b57060e)
 
 
-## 3) Форма описания проекта:
+# 3) Форма описания проекта:
 ![image](https://github.com/ProgressiveKid/GalleryApp/assets/71317131/be5dd86d-feca-4a64-8043-31c0b6ab789b)
 
 # Примечание
