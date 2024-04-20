@@ -6,7 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Data;
 using System.Windows;
-
 namespace WpfApp1.ModelViews
 {
 	public class BoolToVisibilityConverter : IValueConverter

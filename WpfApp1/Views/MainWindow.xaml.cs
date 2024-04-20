@@ -22,6 +22,7 @@ using System.Reflection.Metadata;
 using System.Net.Http.Json;
 using ClientSide.Functional;
 using WpfApp1.ModelViews;
+using System.Diagnostics;
 
 namespace WpfApp1
 {
@@ -35,6 +36,10 @@ namespace WpfApp1
 			InitializeComponent();
 
 		}
-	
+		private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)
+		{
+			Process.Start(new ProcessStartInfo(e.Uri.AbsoluteUri));
+			e.Handled = true;
+		}
 	}
 }

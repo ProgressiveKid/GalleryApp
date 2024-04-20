@@ -19,64 +19,7 @@ using Newtonsoft.Json.Linq;
 using System.IO;
 namespace WpfApp1.ModelViews
 {
-	public class GalleryViewModel : INotifyPropertyChanged
-	{
-		private int _id;
-		public int Id
-		{
-			get { return _id; }
-			set
-			{
-				if (_id != value)
-				{
-					_id = value;
-					OnPropertyChanged();
-				}
-			}
-		}
-		/// <summary>
-		/// Текст для изображения
-		/// </summary>
-		private string _imageName;
-		public string ImageName
-		{
-			get { return _imageName; }
-			set
-			{
-				if (_imageName != value)
-				{
-					_imageName = value;
-					OnPropertyChanged();
-				}
-			}
-
-		}
-		/// <summary>
-		/// Изображение 
-		/// </summary>
-		private BitmapImage _image;
-		public BitmapImage Image
-		{
-			get { return _image; }
-			set
-			{
-				if (_image != value)
-				{
-					_image = value;
-					OnPropertyChanged();
-				}
-			}
-		}
-		public event PropertyChangedEventHandler PropertyChanged;
-		protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-		{
-			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-		}
-	}
-
-
-
-		public class GalleryItemViewModel : INotifyPropertyChanged
+	public class GalleryItemViewModel : INotifyPropertyChanged
 	{
 		public GalleryItemViewModel()
 		{
@@ -164,14 +107,11 @@ namespace WpfApp1.ModelViews
 					Image = ImageHandler.FromStringToBitMap(foundItem.Image);
 					if (_selectedImageName.Contains(Id.ToString()))
 					{
-						int index = _selectedImageName.LastIndexOf(Id.ToString());
-						if (index != -1 && index < _selectedImageName.Length - 1)
-						{
-							_selectedImageName = _selectedImageName.Substring(index + Id.ToString().Length + 1);
-							ImageName = _selectedImageName;
-							OnPropertyChanged(nameof(SelectedImageName));
-							OnPropertyChanged(nameof(ImageName));
-						}
+						int countDeleteFirstSimvol = idItem.ToString().Length + 1; //
+						_selectedImageName = _selectedImageName.Substring(countDeleteFirstSimvol);
+						ImageName = _selectedImageName;
+						OnPropertyChanged(nameof(SelectedImageName));
+						OnPropertyChanged(nameof(ImageName));
 					}
 					OnPropertyChanged(nameof(Image));
 				}
@@ -373,11 +313,8 @@ namespace WpfApp1.ModelViews
 					if (openFileDialog.ShowDialog() == true)
 					{
 						string selectedImagePath = openFileDialog.FileName;
-						// Здесь вы можете обработать выбранное изображение
-						//MessageBox.Show("Выбранное изображение: " + selectedImagePath);
 						try
 						{
-							//ImageSource = selectedImagePath;
 							BitmapImage bitmap = new BitmapImage(new Uri(selectedImagePath));
 							FileInfo fileInfo = new FileInfo(selectedImagePath);
 							double fileSizeInMegabytes = fileInfo.Length / 1024.0 / 1024.0;                          // Проверяем, что размер файла не превышает максимально допустимый
@@ -390,7 +327,6 @@ namespace WpfApp1.ModelViews
 							{
 								ShowErrorSnackbar($"Ошибка: изображение превышает {MaxImageSizeMB} Мб");
 							}
-							//	ImgForCreate.Source = bitmap;
 						}
 						catch (Exception ex)
 						{
@@ -439,7 +375,7 @@ namespace WpfApp1.ModelViews
 						}
 						catch (Exception ex)
 						{
-							Console.WriteLine("Ошибка: " + ex.Message);
+							ShowErrorSnackbar("Ошибка: " + ex.Message);
 						}
 						finally
 						{
@@ -476,10 +412,6 @@ namespace WpfApp1.ModelViews
 								{
 									CollectionImageNames.Add($"{item.Id}.{item.ImageName}");
 								}
-								//ImageName = CollectionImageNames[GalleryItems.Count - 1];
-								//Image = ImageHandler.FromStringToBitMap(GalleryItems[GalleryItems.Count - 1].Image);
-								//ShowSnackbar("Галлерея получена,отображена последняя добавленная картина", 4500);
-								//_isActiveLoad = true;
 							}
 							else
 							{
@@ -517,20 +449,18 @@ namespace WpfApp1.ModelViews
 							HttpResponseMessage response = await client.PutAsync("http://localhost:5258/Gallery/DeleteItem", content);
 							if (response.IsSuccessStatusCode)
 							{
-								//GalleryItems.Clear();
 								string responseBody = await response.Content.ReadAsStringAsync();
 								ShowSnackbar(responseBody, 3500);
 								GetAllItems.Execute(obj);
-								//_isActiveLoad = true;
 							}
 							else
 							{
-								Console.WriteLine("Ошибка при выполнении запроса: " + response.StatusCode);
+								ShowErrorSnackbar("Ошибка при выполнении запроса: " + response.StatusCode);
 							}
 						}
 						catch (Exception ex)
 						{
-							Console.WriteLine("Ошибка: " + ex.Message);
+							ShowErrorSnackbar("Ошибка: " + ex.Message);
 						}
 						finally
 						{
@@ -561,7 +491,6 @@ namespace WpfApp1.ModelViews
 								GalleryItem editableGalleryItem = GalleryItems.FirstOrDefault(i => i.Id == Id);
 								editableGalleryItem.ImageName = ImageName;
 								editableGalleryItem.Image = editableGalleryItem.Image != ImageName ? ImageHandler.FromImageToString64(Image) : editableGalleryItem.Image;
-								//GalleryItem galleryData = new GalleryItem() { ImageName = ImageName, Image = base64String };
 								string messageOnServer = JsonConvert.SerializeObject(editableGalleryItem);
 								var content = new StringContent(messageOnServer, System.Text.Encoding.UTF8, "application/json");
 								HttpResponseMessage response = await client.PutAsync("http://localhost:5258/Gallery/UpdateItem", content);
@@ -573,17 +502,18 @@ namespace WpfApp1.ModelViews
 								}
 								else
 								{
-									Console.WriteLine("Ошибка при выполнении запроса: " + response.StatusCode);
+									ShowErrorSnackbar("Ошибка при выполнении запроса: " + response.StatusCode);
 								}
 							}
-							else {
+							else
+							{
 								ShowErrorSnackbar("Превышена максимальная длина текста картинки: " + MaxImageNameLength);
 								throw new FormatException();
 							}
 						}
 						catch (Exception ex)
 						{
-							Console.WriteLine("Ошибка: " + ex.Message);
+							ShowErrorSnackbar("Ошибка: " + ex.Message);
 						}
 						finally
 						{

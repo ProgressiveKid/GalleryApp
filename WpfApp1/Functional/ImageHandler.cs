@@ -11,15 +11,10 @@ namespace ClientSide.Functional
 	class ImageHandler
 	{
 		/// <summary>
-		/// Конвертирует изображение из файла по указанному пути в строку Base64.
+		/// Конвертирует изображение из файла  в строку Base64.
 		/// </summary>
-		/// <param name="path">Путь к файлу изображения.</param>
+		/// <param name="path">изображение.</param>
 		/// <returns>Строка Base64, представляющая изображение.</returns>
-		public static string FromUriToString64(string path)
-		{ 
-			byte[] imageBytes = File.ReadAllBytes(path);
-			return Convert.ToBase64String(imageBytes);
-		}
 		public static string FromImageToString64(BitmapImage image)
 		{
 			byte[] imageBytes;

@@ -26,8 +26,8 @@ namespace ServerSide.Controllers
 		public async Task<IActionResult> CreateGalleryItem(GalleryItem galleryItem)
 		{
 			//LoggerMethod(order);
-			var result = _galleryService.CreateNewItem(galleryItem);
-			return Ok(result);
+			string createdId = _galleryService.CreateNewItem(galleryItem);
+			return Ok($"В системе создан новый элемент с ID = {createdId}");
 		}
 		[HttpPut("UpdateItem")]
 		public async Task<IActionResult> UpdateItem(GalleryItem galleryItem)

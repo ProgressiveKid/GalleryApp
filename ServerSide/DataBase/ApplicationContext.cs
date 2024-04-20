@@ -6,6 +6,8 @@ using System.Data;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using SharedResources.Models;
+using Microsoft.Extensions.Options;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace ServerSide
 {
@@ -40,10 +42,9 @@ namespace ServerSide
 			}
 		}
 		protected override void OnConfiguring(DbContextOptionsBuilder options)
-		{
-
-			//options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddFilter((category, level) =>
-			//	category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)));
+		{ // убрали логирование запрос EF
+			options.UseLoggerFactory(LoggerFactory.Create(builder => builder.AddFilter((category, level) =>
+				category == DbLoggerCategory.Database.Command.Name && level == LogLevel.Information)));
 		}
 
 

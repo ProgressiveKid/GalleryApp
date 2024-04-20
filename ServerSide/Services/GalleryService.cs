@@ -5,18 +5,18 @@ using SharedResources.Models;
 
 namespace ServerSide.Services
 {
-	public class GalleryManageService : IGalleryService
+	public class GalleryService : IGalleryService
 	{
 		private ApplicationContext db;
 		private readonly IMemoryCache _cache;
 		private readonly string cacheKey = "AllGalleryItems";
-		public GalleryManageService(ApplicationContext constructDb, IMemoryCache cache)
+		public GalleryService(ApplicationContext constructDb, IMemoryCache cache)
 		{
 			db = constructDb;
 			_cache = cache;
 		}
 
-		List<GalleryItem> IGalleryService.GetAllGalleryItems()
+		public List<GalleryItem> GetAllGalleryItems()
 		{
 			if (!_cache.TryGetValue(cacheKey, out List<GalleryItem> cachedItems))
 			{
@@ -45,20 +45,25 @@ namespace ServerSide.Services
 
 			var result = db.GalleryItems.Add(newGalleryItem);
 			db.SaveChanges();
-			return $"В системе создан новый элемент с ID = {newGalleryItem.Id}";
+			return newGalleryItem.Id.ToString();
 		}
 
 
 		public string DeleteItem(int IdGalleryItem)
 		{
 			var cachedItems = _cache.Get<List<GalleryItem>>(cacheKey);
-			var galleryItem = cachedItems.FirstOrDefault(u => u.Id == IdGalleryItem);
-
-			// Если элемент найден в кэше, удаляем его оттуда
-			if (galleryItem != null)
+			if (cachedItems != null)
 			{
-				cachedItems.Remove(galleryItem);
-				_cache.Set(cacheKey, cachedItems);
+				var galleryItem = cachedItems.FirstOrDefault(u => u.Id == IdGalleryItem);
+
+				// Если элемент найден в кэше, удаляем его оттуда
+				if (galleryItem != null)
+				{
+					cachedItems.Remove(galleryItem);
+					_cache.Set(cacheKey, cachedItems);
+				}
+
+
 			}
 
 			// Удаляем элемент из базы данных
@@ -81,20 +86,25 @@ namespace ServerSide.Services
 		public string UpdateItem(GalleryItem editableGalleryItem)
 		{
 			var cachedItems = _cache.Get<List<GalleryItem>>(cacheKey);
-			var galleryItem = cachedItems.FirstOrDefault(u => u.Id == editableGalleryItem.Id);
-
-			if (galleryItem != null)
+			if (cachedItems != null)
 			{
-				if (galleryItem.ImageName == editableGalleryItem.ImageName && galleryItem.Image == editableGalleryItem.Image)
+				var galleryItem = cachedItems.FirstOrDefault(u => u.Id == editableGalleryItem.Id);
+
+				if (galleryItem != null)
 				{
-					return "Элемент не изменился, обновление не требуется";
+					if (galleryItem.ImageName == editableGalleryItem.ImageName && galleryItem.Image == editableGalleryItem.Image)
+					{
+						return "Элемент не изменился, обновление не требуется";
+					}
+					else
+					{
+						galleryItem.ImageName = editableGalleryItem.ImageName;
+						galleryItem.Image = editableGalleryItem.Image;
+						_cache.Set(cacheKey, cachedItems);
+					}
 				}
-				else
-				{
-					galleryItem.ImageName = editableGalleryItem.ImageName;
-					galleryItem.Image = editableGalleryItem.Image;
-					_cache.Set(cacheKey, cachedItems);
-				}
+
+
 			}
 
 			var itemToUpdate = db.GalleryItems.FirstOrDefault(u => u.Id == editableGalleryItem.Id);
